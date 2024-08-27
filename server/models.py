@@ -36,10 +36,6 @@ class Admin(User):
         'polymorphic_identity': 'admin',
     }
 
-    @declared_attr
-    def __tablename__(cls):
-        return cls.__name__.lower() + 's'
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.is_admin = True
