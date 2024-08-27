@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from datetime import timedelta
 import os
+import cloudinary
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -21,6 +22,13 @@ CORS(app)
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
 })
+
+cloudinary.config(
+    cloud_name='dmze7emzl',
+    api_key='879125659435828',
+    api_secret='EP7n75hw2qvKo05IaAJv40RiW0o'
+)
+
 db = SQLAlchemy(metadata=metadata)
 db.init_app(app)
 
