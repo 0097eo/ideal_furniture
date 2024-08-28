@@ -36,8 +36,8 @@ class Admin(User):
         'polymorphic_identity': 'admin',
     }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.is_admin = True
 
 class Shopper(User):
