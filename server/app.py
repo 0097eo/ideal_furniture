@@ -8,6 +8,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import PasswordField
 from config import app, db, api
 from models import User, Shopper, Admin, Product, Category, Order, OrderItem, Cart, CartItem, Review, ProductAnalytics, OrderAnalytics
+import secrets
+from email.mime.text import MIMEText
+import smtplib
+from datetime import timedelta
 
 # Initialize Flask-JWT
 jwt = JWTManager(app)
@@ -15,26 +19,84 @@ jwt = JWTManager(app)
 # Initialize Flask-Admin
 admin_panel = FlaskAdmin(app, name='Ideal Furniture & Decor', template_mode='bootstrap3')
 
+# User verification
+def send_verification_email(email, verification_code):
+    sender = 'emmanuelokello294@gmail.com'
+    recipient = email
+    subject = 'Ideal Furniture & Decor - Verify your email'
+    body = f'Your verification code is : {verification_code}'
+
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = recipient
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+            smtp.starttls()
+            smtp.login('emmanuelokello294@gmail.com', 'quzo ygrw gcse maim')
+            smtp.send_message(msg)
+    except smtplib.SMTPException as e:
+        print(f"Error sending verification email: {e}")
+        raise e
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise e
+
 # User Authentication
 class UserRegistration(Resource):
     def post(self):
         data = request.get_json()
-        hashed_password = generate_password_hash(data['password'])
+        if User.query.filter_by(username=data['username']).first() or User.query.filter_by(email=data['email']).first():
+            return {'error': 'Username or email already exists'}, 400
+
+        verification_code = secrets.token_hex(3)
         new_user = Shopper(
             username=data['username'],
             email=data['email'],
-            password=hashed_password
+            password=data['password'],
+            verification_code=verification_code,
+            is_verified=False
         )
         db.session.add(new_user)
         db.session.commit()
-        return {'message': 'User created successfully'}, 201
+
+        try:
+            send_verification_email(data['email'], verification_code)
+            return {'message': 'User created. Please check your email for verification.'}, 201
+        except Exception as e:
+            db.session.delete(new_user)
+            db.session.commit()
+            return {'error': 'Failed to send verification email.'}, 500
+        
+class VerifyEmail(Resource):
+    def post(self):
+        data = request.get_json()
+        email = data.get('email')
+        verification_code = data.get('verification_code')
+
+        if not email or not verification_code:
+            return {'error': 'Missing email or verification code'}, 400
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user or user.verification_code != verification_code:
+            return {'error': 'Invalid email or verification code'}, 401
+
+        user.is_verified = True
+        user.verification_code = None
+        db.session.commit()
+
+        return {'message': 'Email verified successfully'}, 200
 
 class UserLogin(Resource):
     def post(self):
         data = request.get_json()
         user = User.query.filter_by(username=data['username']).first()
-        if user and check_password_hash(user.password, data['password']):
-            access_token = create_access_token(identity=user.id)
+        if user and user.check_password(data['password']):
+            if not user.is_verified:
+                return {'message': 'Please verify your email before logging in.'}, 401
+            access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=10))
             return {'access_token': access_token}, 200
         return {'message': 'Invalid credentials'}, 401
 
@@ -181,6 +243,7 @@ admin_panel.add_view(OrderAnalyticsAdminView(OrderAnalytics, db.session))
 
 # Add resources to API
 api.add_resource(UserRegistration, '/register')
+api.add_resource(VerifyEmail, '/verify-email')
 api.add_resource(UserLogin, '/login')
 api.add_resource(ProductList, '/products')
 api.add_resource(CartResource, '/cart')
