@@ -142,7 +142,7 @@ class ProductAnalytics(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     views = db.Column(db.Integer, default=0)
     purchases = db.Column(db.Integer, default=0)
-    revenue = db.Column(db.Float, default=0.0)
+    revenue = db.Column(db.Integer, default=0)
 
     product = db.relationship('Product', backref='analytics')
 
@@ -152,7 +152,7 @@ class OrderAnalytics(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
     total_orders = db.Column(db.Integer, default=0)
-    total_revenue = db.Column(db.Float, default=0.0)
+    total_revenue = db.Column(db.Integer, default=0)
 
 class SearchLog(db.Model):
     __tablename__ = 'search_logs'

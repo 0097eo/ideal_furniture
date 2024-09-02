@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: ad5c3e1832ac
+Revision ID: 99ff8590b0ee
 Revises: 
-Create Date: 2024-09-02 12:13:04.934766
+Create Date: 2024-09-02 13:01:04.408996
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ad5c3e1832ac'
+revision = '99ff8590b0ee'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,7 +28,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('date', sa.Date(), nullable=False),
     sa.Column('total_orders', sa.Integer(), nullable=True),
-    sa.Column('total_revenue', sa.Float(), nullable=True),
+    sa.Column('total_revenue', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
@@ -92,7 +92,7 @@ def upgrade():
     sa.Column('product_id', sa.Integer(), nullable=False),
     sa.Column('views', sa.Integer(), nullable=True),
     sa.Column('purchases', sa.Integer(), nullable=True),
-    sa.Column('revenue', sa.Float(), nullable=True),
+    sa.Column('revenue', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['product_id'], ['products.id'], name=op.f('fk_product_analytics_product_id_products')),
     sa.PrimaryKeyConstraint('id')
     )

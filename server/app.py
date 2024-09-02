@@ -204,6 +204,42 @@ class CartResource(Resource):
         db.session.add(cart_item)
         db.session.commit()
         return {'message': 'Item added to cart'}, 201
+    
+    @jwt_required()
+    def delete(self, cart_item_id):
+        user_id = get_jwt_identity()
+        cart = Cart.query.filter_by(shopper_id=user_id).first()
+        if not cart:
+            return {'message': 'Cart not found'}, 404
+        
+        cart_item = CartItem.query.filter_by(cart_id=cart.id, id=cart_item_id).first()
+        if not cart_item:
+            return {'message': 'Cart item not found'}, 404
+        
+        db.session.delete(cart_item)
+        db.session.commit()
+        return {'message': 'Item removed from cart'}, 200
+    
+    @jwt_required()
+    def put(self, cart_item_id):
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        new_quantity = data.get('quantity')
+        
+        if not new_quantity or new_quantity <= 0:
+            return {'message': 'Invalid quantity'}, 400
+        
+        cart = Cart.query.filter_by(shopper_id=user_id).first()
+        if not cart:
+            return {'message': 'Cart not found'}, 404
+        
+        cart_item = CartItem.query.filter_by(cart_id=cart.id, id=cart_item_id).first()
+        if not cart_item:
+            return {'message': 'Cart item not found'}, 404
+        
+        cart_item.quantity = new_quantity
+        db.session.commit()
+        return {'message': 'Cart item updated'}, 200
 
 # Checkout Process
 class CheckoutResource(Resource):
@@ -320,7 +356,7 @@ api.add_resource(UserRegistration, '/register')
 api.add_resource(VerifyEmail, '/verify-email')
 api.add_resource(UserLogin, '/login')
 api.add_resource(ProductList, '/products')
-api.add_resource(CartResource, '/cart')
+api.add_resource(CartResource, '/cart', '/cart/<cart_item_id>')
 api.add_resource(CheckoutResource, '/checkout')
 
 if __name__ == '__main__':
