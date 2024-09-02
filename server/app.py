@@ -11,14 +11,34 @@ from models import User, Shopper, Admin, Product, Category, Order, OrderItem, Ca
 import secrets
 from email.mime.text import MIMEText
 import smtplib
-from datetime import timedelta
+from datetime import timedelta, datetime
+import os
+import requests
+from requests.auth import HTTPBasicAuth
+from dotenv import load_dotenv
+import base64
 
+load_dotenv()
+# Daraja API credentials
+DARAJA_CONSUMER_KEY = os.getenv('DARAJA_CONSUMER_KEY')
+DARAJA_CONSUMER_SECRET = os.getenv('DARAJA_CONSUMER_SECRET')
+DARAJA_SHORTCODE = os.getenv('DARAJA_SHORTCODE')
+DARAJA_PASSKEY = os.getenv('DARAJA_PASSKEY')
+DARAJA_BASE_URL = "https://sandbox.safaricom.co.ke"
 
 # Initialize Flask-JWT
 jwt = JWTManager(app)
 
 # Initialize Flask-Admin
 admin_panel = FlaskAdmin(app, name='Ideal Furniture & Decor', template_mode='bootstrap3')
+
+#daraja accesstoken
+def generate_daraja_token():
+    auth_url = f"{DARAJA_BASE_URL}/oauth/v1/generate?grant_type=client_credentials"
+    response = requests.get(auth_url, auth=HTTPBasicAuth(DARAJA_CONSUMER_KEY, DARAJA_CONSUMER_SECRET))
+    response_json = response.json()
+    return response_json['access_token']
+
 
 # User verification
 def send_verification_email(email, verification_code):
@@ -200,6 +220,7 @@ class CheckoutResource(Resource):
         # Create order
         order = Order(shopper_id=user_id, total_amount=total_amount)
         db.session.add(order)
+        db.session.commit()
         
         # Create order items
         for cart_item in cart.items:
@@ -210,35 +231,54 @@ class CheckoutResource(Resource):
                 price=cart_item.product.price
             )
             db.session.add(order_item)
-        
-        # Clear cart
-        for item in cart.items:
-            db.session.delete(item)
-        
+
+        CartItem.query.filter_by(cart_id=cart.id).delete()
         db.session.commit()
-        
-        # Simulate payment process (In a real app, you'd integrate with a payment gateway)
-        # Generate dummy address and billing info
-        address = "123 Main St, Anytown, USA"
-        billing_info = "Card ending in 1234"
-        invoice_number = f"INV-{order.id}"
-        
-        return {
-            'message': 'Order placed successfully',
-            'order_id': order.id,
-            'total_amount': total_amount,
-            'address': address,
-            'billing_info': billing_info,
-            'invoice_number': invoice_number
-        }, 201
+            
+        # Initiate M-Pesa Payment
+        access_token = generate_daraja_token()
+        payment_url = f"{DARAJA_BASE_URL}/mpesa/stkpush/v1/processrequest"
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json"
+        }
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        password = base64.b64encode(f"{DARAJA_SHORTCODE}{DARAJA_PASSKEY}{timestamp}".encode()).decode('utf-8')
+        payload = {
+            "BusinessShortCode": DARAJA_SHORTCODE,
+            "Password": password,
+            "Timestamp": timestamp,
+            "TransactionType": "CustomerPayBillOnline",
+            "Amount": total_amount,
+            "PartyA": "254706446211", 
+            "PartyB": DARAJA_SHORTCODE,
+            "PhoneNumber": "254706446211", 
+            "CallBackURL": "https://mydomain.com/path", 
+            "AccountReference": f"Order-{order.id}",
+            "TransactionDesc": f"Payment for Order-{order.id}"
+        }
+
+        response = requests.post(payment_url, json=payload, headers=headers)
+        response_json = response.json()
+
+        if response_json.get("ResponseCode") == "0":
+            return {
+                'message': 'Order placed successfully, awaiting payment confirmation',
+                'order_id': order.id,
+                'total_amount': total_amount,
+                'payment_request': response_json
+            }, 201
+        else:
+            return {
+                'message': 'Failed to initiate payment',
+                'error': response_json
+            }, 400
 
 # Enhanced Admin Views
 class SecureModelView(ModelView):
     form_base_class = SecureForm
     
     def is_accessible(self):
-        # In a real application, you'd check if the current user is an admin
-        # For simplicity, we're always returning True here
         return True
 
 class UserAdminView(SecureModelView):

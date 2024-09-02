@@ -57,7 +57,7 @@ class Product(db.Model):
     name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
     image_url=db.Column(db.String(200), nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     stock_quantity = db.Column(db.Integer, default=0)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -80,7 +80,7 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     shopper_id = db.Column(db.Integer, db.ForeignKey('shoppers.id'), nullable=False)
-    total_amount = db.Column(db.Float, nullable=False)
+    total_amount = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(50), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -95,7 +95,7 @@ class OrderItem(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
 
     order = db.relationship('Order', back_populates='items')
     product = db.relationship('Product')

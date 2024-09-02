@@ -99,7 +99,7 @@ def seed_database():
                 name=product_name,
                 description=fake.paragraph(),
                 image_url=image_url,
-                price=round(random.uniform(50, 1000), 2),
+                price=round(random.uniform(50, 1000)),
                 stock_quantity=random.randint(0, 100),
                 category=random.choice(categories)
             )
