@@ -309,6 +309,35 @@ class CheckoutResource(Resource):
                 'message': 'Failed to initiate payment',
                 'error': response_json
             }, 400
+        
+class OrderResource(Resource):
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        orders = Order.query.filter_by(shopper_id=user_id).all()
+        
+        if not orders:
+            return {'message': 'No orders found'}, 404
+        
+        order_list = []
+        for order in orders:
+            order_items = OrderItem.query.filter_by(order_id=order.id).all()
+            order_list.append({
+                'order_id': order.id,
+                'total_amount': order.total_amount,
+                'status': order.status,
+                'created_at': order.created_at,
+                'items': [{
+                    'product_id': item.product_id,
+                    'product_name': item.product.name,
+                    'quantity': item.quantity,
+                    'price': item.price,
+                    'image_url': item.product.image_url
+                } for item in order_items]
+            })
+        
+        return jsonify(order_list)
+
 
 # Enhanced Admin Views
 class SecureModelView(ModelView):
@@ -358,6 +387,8 @@ api.add_resource(UserLogin, '/login')
 api.add_resource(ProductList, '/products')
 api.add_resource(CartResource, '/cart', '/cart/<cart_item_id>')
 api.add_resource(CheckoutResource, '/checkout')
+api.add_resource(OrderResource, '/orders')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
