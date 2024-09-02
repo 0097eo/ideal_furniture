@@ -13,6 +13,7 @@ from email.mime.text import MIMEText
 import smtplib
 from datetime import timedelta
 
+
 # Initialize Flask-JWT
 jwt = JWTManager(app)
 
@@ -103,19 +104,45 @@ class UserLogin(Resource):
 # Product Listing
 class ProductList(Resource):
     def get(self):
+        # Get pagination and search query parameters from the request
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        search_query = request.args.get('q', '', type=str)
+
+        # Filter by category if provided
         category_id = request.args.get('category_id')
+        query = Product.query
+        
         if category_id:
-            products = Product.query.filter_by(category_id=category_id).all()
-        else:
-            products = Product.query.all()
-        return jsonify([{
-            'id': p.id,
-            'name': p.name,
-            'description': p.description,
-            'price': p.price,
-            'image_url': p.image_url,
-            'category_id': p.category_id
-        } for p in products])
+            query = query.filter_by(category_id=category_id)
+
+        if search_query:
+            # Filter products by name or description using the search query
+            query = query.filter(
+                db.or_(
+                    Product.name.ilike(f'%{search_query}%'),
+                    Product.description.ilike(f'%{search_query}%')
+                )
+            )
+        
+        # Apply pagination
+        paginated_products = query.paginate(page=page, per_page=per_page, error_out=False)
+
+        # Return the paginated results
+        return jsonify({
+            'products': [{
+                'id': p.id,
+                'name': p.name,
+                'description': p.description,
+                'price': p.price,
+                'image_url': p.image_url,
+                'category_id': p.category_id
+            } for p in paginated_products.items],
+            'total': paginated_products.total,
+            'page': paginated_products.page,
+            'pages': paginated_products.pages
+        })
+
 
 # Cart Management
 class CartResource(Resource):
