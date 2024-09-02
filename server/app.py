@@ -152,13 +152,18 @@ class CartResource(Resource):
         cart = Cart.query.filter_by(shopper_id=user_id).first()
         if not cart:
             return {'message': 'Cart is empty'}, 200
+
+        cart_items = CartItem.query.filter_by(cart_id=cart.id).all()
+        if not cart_items:
+            return {'message': 'No items in cart'}, 200
+
         return jsonify([{
             'id': item.id,
             'product_id': item.product_id,
             'product_name': item.product.name,
             'quantity': item.quantity,
             'price': item.product.price
-        } for item in cart.items])
+        } for item in cart_items])
 
     @jwt_required()
     def post(self):
@@ -168,7 +173,8 @@ class CartResource(Resource):
         if not cart:
             cart = Cart(shopper_id=user_id)
             db.session.add(cart)
-        
+            db.session.commit()
+
         cart_item = CartItem(
             cart_id=cart.id,
             product_id=data['product_id'],

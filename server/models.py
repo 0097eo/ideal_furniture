@@ -120,7 +120,7 @@ class CartItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
 
     cart = db.relationship('Cart', back_populates='items')
-    product = db.relationship('Product')
+    product = db.relationship('Product', lazy='joined')
 
 class Review(db.Model):
     __tablename__ = 'reviews'
