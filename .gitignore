@@ -12,6 +12,9 @@
 /db/*.sqlite3
 /db/*.sqlite3-*
 
+# Ignore .env
+/.env
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
