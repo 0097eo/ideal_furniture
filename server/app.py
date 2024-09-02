@@ -120,6 +120,24 @@ class UserLogin(Resource):
             access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=10))
             return {'access_token': access_token}, 200
         return {'message': 'Invalid credentials'}, 401
+    
+
+class UserProfileResource(Resource):
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        
+        if not user:
+            return {'message': 'User not found'}, 404
+        
+        return {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'is_verified': user.is_verified
+        }, 200
+
 
 # Product Listing
 class ProductList(Resource):
@@ -384,6 +402,7 @@ admin_panel.add_view(OrderAnalyticsAdminView(OrderAnalytics, db.session))
 api.add_resource(UserRegistration, '/register')
 api.add_resource(VerifyEmail, '/verify-email')
 api.add_resource(UserLogin, '/login')
+api.add_resource(UserProfileResource, '/profile')
 api.add_resource(ProductList, '/products')
 api.add_resource(CartResource, '/cart', '/cart/<cart_item_id>')
 api.add_resource(CheckoutResource, '/checkout')
