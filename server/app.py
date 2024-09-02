@@ -162,6 +162,7 @@ class CartResource(Resource):
             'product_id': item.product_id,
             'product_name': item.product.name,
             'quantity': item.quantity,
+            'image_url': item.product.image_url,
             'price': item.product.price
         } for item in cart_items])
 
