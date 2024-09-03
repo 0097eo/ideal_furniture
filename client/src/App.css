@@ -241,3 +241,113 @@ nav {
     margin-bottom: 10px;
     margin-left: 10px; 
   }
+.cart-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+
+  .cart-container h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .checkout-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #155724;
+  }
+  
+  .checkout-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #721c24;
+  }
+  
+
+  .cart-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .cart-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 4px;
+  }
+  
+  .cart-item h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  
+  .cart-item p {
+    margin: 5px 0;
+  }
+  
+  .cart-item input[type="number"] {
+    width: 60px;
+    margin-left: 10px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .cart-item button {
+    background-color: #e67e22;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    margin-top: 10px;
+  }
+  
+  .cart-item button:hover {
+    background-color: #e03b3e;
+  }
+  
+  .checkout-section {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .checkout-section h3 {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+  }
+  
+  .checkout-section button {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+  
+  .checkout-section button:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+  }
+  
+  .checkout-section button:hover {
+    background-color: #45a049;
+  }
+  

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../utils/AuthContext';
+import '../App.css'
 
 const Cart = () => {
   const { user, loading } = useAuth();
@@ -91,7 +92,7 @@ const Cart = () => {
 
       if (response.status === 201) {
         setCheckoutSuccess(response.data);
-        setCartItems([]); // Clear cart items after successful checkout
+        setCartItems([]); 
       } else {
         setCheckoutError(response.data.message || 'Checkout failed');
       }
@@ -106,15 +107,19 @@ const Cart = () => {
   };
 
   if (loading || loadingCart) {
-    return <div>Loading...</div>;
+    return <div className='cart-container'>
+      <h2>Loading...</h2>
+      </div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="checkout-error">{error}</div>;
   }
 
   if (!cartItems.length) {
-    return <div>Your cart is empty</div>;
+    return <div className='cart-container'>
+      <h2>Your cart is empty</h2>
+      </div>;
   }
 
   const calculateTotalAmount = () => {
@@ -125,7 +130,7 @@ const Cart = () => {
   };
 
   return (
-    <div>
+    <div className="cart-container">
       <h2>Your Cart</h2>
 
       {checkoutSuccess && (
@@ -139,7 +144,7 @@ const Cart = () => {
       )}
 
       {checkoutError && (
-        <div className="checkout-error" style={{ color: 'red' }}>
+        <div className="checkout-error">
           {checkoutError}
         </div>
       )}
@@ -148,66 +153,45 @@ const Cart = () => {
         <>
           <ul>
             {cartItems.map((item) => (
-              <li key={item.id} style={{ marginBottom: '20px' }}>
+              <li key={item.id} className="cart-item">
                 <img
                   src={item.image_url}
                   alt={item.product_name}
-                  width="100"
-                  height="100"
-                  style={{ objectFit: 'cover' }}
                 />
-                <h3>{item.product_name}</h3>
-                <p>Price: Ksh {item.price.toFixed(2)}</p>
                 <div>
-                  Quantity:
-                  <input
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) =>
-                      handleUpdateQuantity(
-                        item.id,
-                        parseInt(e.target.value, 10)
-                      )
-                    }
-                    min="1"
-                    style={{ width: '60px', marginLeft: '10px' }}
-                  />
+                  <h3>{item.product_name}</h3>
+                  <p>Ksh {item.price.toFixed(2)}</p>
+                  <div>
+                    
+                    <input
+                      type="number"
+                      value={item.quantity}
+                      onChange={(e) =>
+                        handleUpdateQuantity(
+                          item.id,
+                          parseInt(e.target.value, 10)
+                        )
+                      }
+                      min="1"
+                    />
+                  </div>
+                  <button
+                    onClick={() => handleDeleteItem(item.id)}
+                  >
+                    Remove
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleDeleteItem(item.id)}
-                  style={{
-                    marginTop: '10px',
-                    backgroundColor: '#ff4d4f',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '5px 10px',
-                    cursor: 'pointer',
-                    borderRadius: '5px',
-                  }}
-                >
-                  Remove
-                </button>
               </li>
             ))}
           </ul>
 
-          <div style={{ marginTop: '20px' }}>
+          <div className="checkout-section">
             <h3>
-              Total Amount: Ksh {calculateTotalAmount().toFixed(2)}
+              Subtotal: Ksh {calculateTotalAmount().toFixed(2)}
             </h3>
             <button
               onClick={handleCheckout}
               disabled={checkoutLoading}
-              style={{
-                marginTop: '10px',
-                backgroundColor: '#4caf50',
-                color: '#fff',
-                border: 'none',
-                padding: '10px 20px',
-                cursor: 'pointer',
-                borderRadius: '5px',
-                fontSize: '16px',
-              }}
             >
               {checkoutLoading ? 'Processing...' : 'Checkout'}
             </button>
