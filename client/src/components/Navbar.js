@@ -15,7 +15,9 @@ const Navbar = () => {
   return (
     <nav>
       <div className="nav-logo">
-        <span className="furniture">Ideal Furniture</span> & <span className="decor">Decor</span>
+        <Link to='/home' className="nav-logo-link">
+          <span className="furniture">Ideal Furniture</span><span className="decor"> & Decor</span>
+        </Link>
       </div>
       <div className="nav-center">
         <ul>
@@ -41,7 +43,7 @@ const Navbar = () => {
             <Link to="/login">Login</Link>
           </>
         ) : (
-          <button onClick={handleLogout} label="Logout" className='logout-btn'>
+          <button onClick={handleLogout} className='logout-btn'>
             Logout
           </button>
         )}
