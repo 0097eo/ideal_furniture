@@ -1,3 +1,6 @@
+
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
 nav {
     position: fixed;
     top: 0;
@@ -515,3 +518,40 @@ nav {
     background-color: #9ca3af;
   }
   
+  .carousel-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px 0;
+    padding-top: 80px;
+    text-align: center;
+}
+
+.carousel-slide {
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.carousel-slide img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.carousel-slide h3 {
+    font-size: 1.2rem;
+    margin: 0;
+    margin-left: -90px;
+}
+
+.carousel-slide p {
+    font-size: 1rem;
+    color: #333;
+    margin-left: -90px;
+}
+
+.slick-dots li button:before {
+    color: #333;
+}
