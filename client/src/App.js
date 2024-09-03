@@ -6,6 +6,8 @@ import VerifyEmail from './pages/VerifyEmail';
 import UserDashboard from './pages/Dashboard';
 import ProductList from './pages/ProductList';
 import { useAuth } from './utils/AuthContext';
+import Navbar from './components/Navbar';
+import Cart from './components/Cart';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -20,13 +22,15 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path='/dashboard' element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/verify-email' element={<VerifyEmail />} />
         <Route path='/products' element={<ProductList />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path='/cart' element={<Cart />} />
+        <Route path="*" element={<Navigate to="/products" replace />} />
       </Routes>
     </Router>
   );
