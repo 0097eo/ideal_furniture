@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Product from '../components/Product';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -104,12 +105,7 @@ const ProductList = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
-          <div key={product.id} className="border p-4 rounded shadow">
-            <img src={product.image_url} alt={product.name} className="w-full h-48 object-cover mb-2" />
-            <h2 className="text-xl font-semibold">{product.name}</h2>
-            <p className="text-gray-600">{product.description}</p>
-            <p className="text-lg font-bold mt-2">Ksh {product.price.toFixed(2)}</p>
-          </div>
+          <Product key={product.id} product={product}/>
         ))}
       </div>
 
