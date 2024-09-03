@@ -70,7 +70,8 @@ const ProductList = () => {
     navigate(`/products?page=1&q=${searchQuery}&category_id=${e.target.value}`);
   };
 
-  if (loading) return <div className="text-center py-4">Loading...</div>;
+  if (loading) return <div className="cart-container">
+    <h2>Loading...</h2></div>;
   if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
 
   return (
