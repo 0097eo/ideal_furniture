@@ -37,7 +37,7 @@ const Product = ({ product }) => {
     <>
       <div className="product" onClick={handleModalOpen}>
         <img src={product.image_url} alt={product.name} />
-        <p>Price: Ksh {product.price}</p>
+        <p>Ksh {product.price}</p>
         <h2>{product.name}</h2>
       </div>
 
