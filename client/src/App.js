@@ -8,6 +8,7 @@ import ProductList from './pages/ProductList';
 import { useAuth } from './utils/AuthContext';
 import Navbar from './components/Navbar';
 import Cart from './components/Cart';
+import Home from './pages/Home';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -30,6 +31,7 @@ const App = () => {
         <Route path='/verify-email' element={<VerifyEmail />} />
         <Route path='/products' element={<ProductList />} />
         <Route path='/cart' element={<Cart />} />
+        <Route path='/home' element={<Home />} />
         <Route path="*" element={<Navigate to="/products" replace />} />
       </Routes>
     </Router>
