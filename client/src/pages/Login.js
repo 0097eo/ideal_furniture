@@ -22,10 +22,10 @@ const Login = () => {
     try {
       const result = await login(username, password);
       if (result.success) {
-        navigate('/dashboard'); // Redirect to dashboard on successful login
+        navigate('/dashboard'); 
       } else if (result.needsVerification) {
         setNeedsVerification(true);
-        setEmail(username); // Assuming username is email
+        setEmail(username); 
       } else {
         setError(result.error);
       }
@@ -143,7 +143,7 @@ const Login = () => {
                 autoComplete="username"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username or Email"
+                placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
