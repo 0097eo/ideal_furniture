@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Product from '../components/Product';
+import '../App.css'
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -14,10 +15,10 @@ const ProductList = () => {
   const perPage = 10;
 
   const categories = [
-    {id : 1, name: "Couches"},
-    {id : 2, name: "Tables"},
-    {id : 3, name: "Beds"},
-  ]
+    { id: 1, name: 'Couches' },
+    { id: 2, name: 'Tables' },
+    { id: 3, name: 'Beds' },
+  ];
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,8 +44,8 @@ const ProductList = () => {
           page,
           per_page: perPage,
           q,
-          category_id: category
-        }
+          category_id: category,
+        },
       });
       setProducts(response.data.products);
       setTotalPages(response.data.pages);
@@ -73,22 +74,18 @@ const ProductList = () => {
   if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Products</h1>
-
-      <form onSubmit={handleSearch} className="mb-4">
-        <div className="flex gap-2">
+    <div className="container">
+    <form onSubmit={handleSearch}>
+        <div className="flex">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products..."
-            className="flex-grow p-2 border rounded"
           />
           <select
             value={categoryId}
             onChange={handleCategoryChange}
-            className="p-2 border rounded"
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
@@ -97,15 +94,13 @@ const ProductList = () => {
               </option>
             ))}
           </select>
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-            Search
-          </button>
+          <button type="submit">Search</button>
         </div>
       </form>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid">
         {products.map((product) => (
-          <Product key={product.id} product={product}/>
+          <Product key={product.id} product={product} />
         ))}
       </div>
 
