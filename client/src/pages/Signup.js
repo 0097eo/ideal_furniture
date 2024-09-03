@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../App.css';
+import Footer from '../components/Footer';
+
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -47,6 +49,7 @@ const Signup = () => {
   };
 
   return (
+    <>
     <div className="login-container">
       <section className="login-image">
         <img src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZnVybml0dXJlfGVufDB8fDB8fHww" alt="Signup" />
@@ -139,6 +142,8 @@ const Signup = () => {
         </div>
       </section>
     </div>
+    <Footer />
+    </>
   );
 };
 

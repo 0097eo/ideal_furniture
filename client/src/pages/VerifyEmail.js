@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 import "../App.css"
+import Footer from '../components/Footer';
 
 const VerifyEmail = () => {
   const [verificationCode, setVerificationCode] = useState('');
@@ -33,6 +34,8 @@ const VerifyEmail = () => {
   };
 
   return (
+    <>
+    
     <div className="login-container">
       <section className="login-image">
         <img src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZnVybml0dXJlfGVufDB8fDB8fHww" alt="Verify Email" />
@@ -77,6 +80,8 @@ const VerifyEmail = () => {
         </div>
       </section>
     </div>
+    <Footer />
+    </>
   );
 };
 

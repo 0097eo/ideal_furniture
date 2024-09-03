@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Product from '../components/Product';
 import '../App.css'
+import Footer from '../components/Footer';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -75,6 +76,8 @@ const ProductList = () => {
   if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
 
   return (
+    <>
+    
     <div className="container">
     <form onSubmit={handleSearch}>
         <div className="flex">
@@ -119,6 +122,8 @@ const ProductList = () => {
         ))}
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 
